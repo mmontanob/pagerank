@@ -10,7 +10,7 @@ def read_args():
     parser.add_argument('--input', help='Name of the input file', default='input')
     parser.add_argument('--output', help='Name of the output file', default='output')
     parser.add_argument('--dp', help='Damping factor', default=0.85, type=float)
-    parser.add_argument('--iter', help='Max Iterations', default=10, type=int)
+    parser.add_argument('--iter', help='Max Iterations', default=1, type=int)
     return parser.parse_args()
 
 

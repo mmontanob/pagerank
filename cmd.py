@@ -1,4 +1,5 @@
 import argparse
+from structs import Node
 
 
 def read_args():
@@ -20,7 +21,27 @@ def read_input(filename):
     :param filename: Name of the input file
     :return: Nodes for the page rank algorithm
     """
-    pass
+    firstLine = True
+    numOfNodes = 0
+    counter = 0
+    nodes = []
+    with open(filename) as file:
+        for line in file:
+            if firstLine:
+                numOfNodes = int(line)
+                for i in range(numOfNodes):
+                    nodes.append(Node(str(i)))
+                firstLine = False
+                continue
+            elif numOfNodes == counter:
+                break
+            else :
+                neighbors = map(lambda x: int(x)-1, line.split())
+                nodes[counter].add_neighbors(neighbors)
+                counter+=1
+    for node in nodes:
+        print(f"{node.name}, neig: {node.neighbors}\n")
+    return nodes
 
 
 def write_output(filename, results):

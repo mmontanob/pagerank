@@ -14,7 +14,7 @@ def pagerank(nodes, iter, dp):
     n = nodes
     for _ in range(iter):
         neighbors = n.map(lambda node: (node.name, node.neighbors))
-        contribs = n.flatMap(lambda node: list(node.neighbors.map(lambda ne: (ne, node.rank / len(node.neighbors)))))
+        contribs = n.flatMap(lambda node: list(map(lambda ne: (ne, node.rank / len(node.neighbors)), node.neighbors)))
         r = 1.0 - dp
         new_ranks = contribs.reduceByKey(lambda a, b: a + b).mapValues(lambda acc: r + dp * acc)
         n = new_ranks.join(neighbors).map(lambda node: Node(node[0], node[1][1], node[1][0]))

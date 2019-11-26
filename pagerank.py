@@ -12,13 +12,17 @@ def pagerank(nodes, iter, dp):
     :return:
     """
     n = nodes
-    for _ in range(iter):
-        neighbors = n.map(lambda node: (node.name, node.neighbors))
-        contribs = n.flatMap(lambda node: list(map(lambda ne: (ne, node.rank / len(node.neighbors)), node.neighbors)))
-        r = 1.0 - dp
+    curr = iter
+    r = 1.0 - dp
+    while curr > 0:
+        print('ITERATION: ' + str(iter - curr))
+        neighbors = n.map(lambda node: (str(node.name), node.neighbors))
+        contribs = n.flatMap(lambda node: list(map(lambda ne: (str(ne), node.rank / len(node.neighbors)), node.neighbors)))
         new_ranks = contribs.reduceByKey(lambda a, b: a + b).mapValues(lambda acc: r + dp * acc)
-        n = new_ranks.join(neighbors).map(lambda node: Node(node[0], node[1][1], node[1][0]))
-    n = n.map(lambda p: p[1]).collect()
+        print(new_ranks.collect())
+        n = new_ranks.fullOuterJoin(neighbors).map(lambda node: Node(int(node[0]), node[1][1], node[1][0] if node[1][0] else r))
+        curr -= 1
+    n = n.collect()
     n.sort(key=lambda node: node.name)
     return n
 

@@ -14,12 +14,11 @@ def pagerank(nodes, iter, dp):
     n = nodes
     curr = iter
     r = 1.0 - dp
+    neighbors = n.map(lambda node: (str(node.name), node.neighbors))
     while curr > 0:
         print('ITERATION: ' + str(iter - curr))
-        neighbors = n.map(lambda node: (str(node.name), node.neighbors))
         contribs = n.flatMap(lambda node: list(map(lambda ne: (str(ne), node.rank / len(node.neighbors)), node.neighbors)))
         new_ranks = contribs.reduceByKey(lambda a, b: a + b).mapValues(lambda acc: r + dp * acc)
-        print(new_ranks.collect())
         n = new_ranks.fullOuterJoin(neighbors).map(lambda node: Node(int(node[0]), node[1][1], node[1][0] if node[1][0] else r))
         curr -= 1
     n = n.collect()
